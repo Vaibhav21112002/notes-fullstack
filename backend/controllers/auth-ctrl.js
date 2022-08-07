@@ -86,3 +86,14 @@ module.exports.login = async(req,res)=>{
         })
     }
 }
+
+module.exports.getUser = async(req,res)=>{
+    try {
+        
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error logging in",
+            error: err
+        })
+    }
+}
