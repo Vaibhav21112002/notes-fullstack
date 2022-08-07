@@ -88,12 +88,17 @@ module.exports.login = async(req,res)=>{
 }
 
 module.exports.getUser = async(req,res)=>{
+    const userId =req.user.id;
     try {
-        
+        const user = await User.findById(userId).select('-password');
+        return res.status(200).json({
+            message: "User fetched successfully",
+            user
+        })
     } catch (error) {
         return res.status(500).json({
             message: "Error logging in",
-            error: err
+            error: error
         })
     }
 }
