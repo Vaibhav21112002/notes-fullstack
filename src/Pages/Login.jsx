@@ -1,9 +1,11 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
+import noteContext from "../Context/Notes/NoteContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useContext(noteContext);
   const [form, setForm] = useState({ email: "", password: "" });
   return (
     <div>
@@ -40,7 +42,9 @@ const Login = () => {
             />
           </div>
           <button
-            onClick={() => console.log(form)}
+            onClick={() => {
+              login(form);
+            }}
             className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
           >
             Login

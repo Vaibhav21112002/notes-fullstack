@@ -56,12 +56,24 @@ const NoteState = (props) => {
     },
   ];
   const [notes, setNotes] = useState(notesInitial);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const addNote = ({ note }) => {};
   const deleteNote = ({ id }) => {};
   const editNote = ({ id, note }) => {};
+  const login = async (data) => {
+    console.log(data);
+    const res = await api.post("/auth/login", data);
+    console.log(res);
+    localStorage.setItem("token", res.data.token);
+    if (res.data.status) {
+      setLoggedIn(true);
+    }
+  };
   return (
-    <NoteContext.Provider value={{ notes, addNote, deleteNote, editNote }}>
+    <NoteContext.Provider
+      value={{ notes, addNote, deleteNote, editNote, login }}
+    >
       {props.children}
     </NoteContext.Provider>
   );

@@ -52,19 +52,22 @@ module.exports.login = async(req,res)=>{
     try{
         if(!email || !password){
             return res.status(400).json({
-                message:"Please enter all fields"
+                message:"Please enter all fields",
+                status:false
             })
         }
         if(!user){
             return res.status(400).json({
-                message: "User does not exist"
+                message: "User does not exist",
+                status:false
             })
         }
     
         const passwordCompare = await bcrypt.compare(password, user.password);
         if(!passwordCompare){
             return res.status(400).json({
-                message: "Incorrect password"
+                message: "Incorrect password",
+                status:false
             })
         }
     
@@ -77,12 +80,14 @@ module.exports.login = async(req,res)=>{
         return res.status(200).json({
             message: "User logged in successfully",
             user,
-            token
+            token,
+            status:true
         })
     }catch(err){    
         return res.status(500).json({
             message: "Error logging in",
-            error: err
+            error: err,
+            status:false
         })
     }
 }
