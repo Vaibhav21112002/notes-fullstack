@@ -5,7 +5,7 @@ import axios from "axios";
 // });
 
 const api = axios.create({
-  baseURL: "https://vaibhav-notes-backend.herokuapp.com//api",
+  baseURL: "https://vaibhav-notes-backend.herokuapp.com/api",
 });
 
 export default api;
