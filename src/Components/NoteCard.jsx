@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { EditFilled, DeleteFilled, SaveFilled } from "@ant-design/icons";
+import NoteContext from "../Context/Notes/NoteContext";
 
 const NoteCard = ({ note, number }) => {
+  const { deleteNote, editNote } = useContext(NoteContext);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
     title: note.title,
@@ -43,19 +45,27 @@ const NoteCard = ({ note, number }) => {
         )}
       </p>
       <div className="w-full flex justify-end gap-5">
-        {open ? (
+        {/* {open ? (
           <SaveFilled
             className="cursor-pointer"
-            onClick={() => setOpen(!open)}
+            onClick={() => {
+              editNote(note._id, form);
+              setOpen(!open);
+            }}
           />
         ) : (
           <EditFilled
             className="cursor-pointer"
             onClick={() => setOpen(!open)}
           />
-        )}
+        )} */}
 
-        <DeleteFilled className="cursor-pointer" />
+        <DeleteFilled
+          className="cursor-pointer"
+          onClick={() => {
+            deleteNote(note._id);
+          }}
+        />
       </div>
     </div>
   );

@@ -8,13 +8,15 @@ module.exports.register = async(req,res)=>{
     const {name, email, password} = req.body;
     const user = await User.findOne({email:email});
     if(!name || !email || !password){
-        return res.status(400).json({
-            message:"Please enter all fields"
+        return res.status(200).json({
+            message:"Please enter all fields",
+            status:false
         })
     }
     if(user){
-        return res.status(400).json({
-            message: "User already exists"
+        return res.status(200).json({
+            message: "User already exists",
+            status:false
         })
     }
     const salt = await bcrypt.genSalt(10);
@@ -41,7 +43,8 @@ module.exports.register = async(req,res)=>{
     }catch(err){
         return res.status(500).json({
             message: "Error creating user",
-            error: err
+            error: err,
+            status:false
         })
     }
 }
@@ -51,13 +54,13 @@ module.exports.login = async(req,res)=>{
     const user = await User.findOne({email:email});
     try{
         if(!email || !password){
-            return res.status(400).json({
+            return res.status(200).json({
                 message:"Please enter all fields",
                 status:false
             })
         }
         if(!user){
-            return res.status(400).json({
+            return res.status(200).json({
                 message: "User does not exist",
                 status:false
             })
@@ -65,7 +68,7 @@ module.exports.login = async(req,res)=>{
     
         const passwordCompare = await bcrypt.compare(password, user.password);
         if(!passwordCompare){
-            return res.status(400).json({
+            return res.status(200).json({
                 message: "Incorrect password",
                 status:false
             })
@@ -103,7 +106,8 @@ module.exports.getUser = async(req,res)=>{
     } catch (error) {
         return res.status(500).json({
             message: "Error logging in",
-            error: error
+            error: error,
+            status:false
         })
     }
 }

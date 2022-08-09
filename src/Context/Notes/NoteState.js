@@ -1,6 +1,7 @@
 import { useState } from "react";
 import NoteContext from "./NoteContext";
 import api from "../../api/index";
+import swal from "sweetalert";
 
 const NoteState = (props) => {
   const notesInitial = [
@@ -57,22 +58,155 @@ const NoteState = (props) => {
   ];
   const [notes, setNotes] = useState(notesInitial);
   const [loggedIn, setLoggedIn] = useState(false);
-
-  const addNote = ({ note }) => {};
-  const deleteNote = ({ id }) => {};
-  const editNote = ({ id, note }) => {};
+  const [refresh, setRefresh] = useState(false);
+  const [name, setName] = useState("");
+  const getNotes = async () => {
+    const token = localStorage.getItem("token");
+    const res1 = await api.get("/notes", {
+      headers: {
+        "auth-token": token,
+      },
+    });
+    setNotes(res1.data.notes);
+  };
+  const addNote = async (data) => {
+    const token = localStorage.getItem("token");
+    const res = await api.post(
+      "/auth/getuser",
+      {},
+      {
+        headers: {
+          "auth-token": token,
+        },
+      }
+    );
+    const user = { id: res.data.user._id };
+    const newNote = { ...data, user };
+    const res1 = await api.post("/notes", newNote, {
+      headers: {
+        "auth-token": token,
+      },
+    });
+    setRefresh(!refresh);
+  };
+  const deleteNote = async (id) => {
+    const token = localStorage.getItem("token");
+    const res = await swal({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this note!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    });
+    if (!res) {
+      return;
+    }
+    const res1 = await api.delete(`/notes/${id}`, {
+      headers: {
+        "auth-token": token,
+      },
+    });
+    swal({
+      title: "Done!",
+      text: "You Have Successfully Deleted Your Note!",
+      icon: "success",
+      button: "Ok",
+    });
+    setRefresh(!refresh);
+  };
+  const editNote = (id, data) => {
+    const token = localStorage.getItem("token");
+    const { title, description } = data;
+    const res1 = api.put(
+      `/notes/${id}`,
+      { title, description },
+      {
+        headers: {
+          "auth-token": token,
+        },
+      }
+    );
+    setRefresh(!refresh);
+  };
+  const register = async (data) => {
+    const res = await api.post("/auth/register", data);
+    if (res.data.status) {
+      swal({
+        title: "Welcome!",
+        text: "You Have Successfully Registered in to My Notes!",
+        icon: "success",
+        button: "Ok",
+      });
+    } else {
+      swal({
+        title: "Error!",
+        text: "User Already Exists!",
+        icon: "error",
+        button: "Ok",
+      });
+      return;
+    }
+  };
   const login = async (data) => {
-    console.log(data);
     const res = await api.post("/auth/login", data);
-    console.log(res);
-    localStorage.setItem("token", res.data.token);
     if (res.data.status) {
       setLoggedIn(true);
+      localStorage.setItem("token", res.data.token);
+      setName(res.data.user.name);
+      swal({
+        title: "Welcome!",
+        text: "You Have Successfully Logged in to My Notes!",
+        icon: "success",
+        button: "Ok",
+      });
+    } else {
+      swal({
+        title: "Error!",
+        text: "Invalid Credentials!",
+        icon: "error",
+        button: "Ok",
+      });
     }
+    window.location.reload();
+  };
+  const logout = async (data) => {
+    const res = await swal({
+      title: "Are you sure?",
+      text: "Do You really want to logout!",
+      icon: "warning",
+      buttons: ["NO", "YES"],
+      dangerMode: true,
+    });
+    if (!res) {
+      return;
+    }
+    localStorage.removeItem("token");
+    setLoggedIn(false);
+    swal({
+      title: "Done!",
+      text: "You Have Logged Out Successfully!",
+      icon: "success",
+      button: "Ok",
+    });
+    window.location.reload();
   };
   return (
     <NoteContext.Provider
-      value={{ notes, addNote, deleteNote, editNote, login }}
+      value={{
+        notes,
+        addNote,
+        deleteNote,
+        editNote,
+        login,
+        register,
+        loggedIn,
+        setLoggedIn,
+        logout,
+        getNotes,
+        refresh,
+        setNotes,
+        name,
+      }}
     >
       {props.children}
     </NoteContext.Provider>

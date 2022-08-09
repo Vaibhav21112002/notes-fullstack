@@ -1,9 +1,11 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
+import NoteContext from "../Context/Notes/NoteContext";
 
 const AddNote = () => {
   const navigate = useNavigate();
+  const { addNote, setRefresh, refresh } = useContext(NoteContext);
   const [form, setForm] = useState({ title: "", description: "", tag: "" });
   return (
     <div>
@@ -55,7 +57,11 @@ const AddNote = () => {
             />
           </div>
           <button
-            onClick={() => console.log(form)}
+            onClick={() => {
+              addNote(form);
+              setForm({ title: "", description: "", tag: "" });
+              navigate("/");
+            }}
             className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
           >
             Add

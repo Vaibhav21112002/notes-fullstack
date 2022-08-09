@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import noteContext from "../Context/Notes/NoteContext";
 
+
+
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useContext(noteContext);

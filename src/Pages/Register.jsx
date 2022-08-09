@@ -1,9 +1,11 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
+import NoteContext from "../Context/Notes/NoteContext";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { register } = useContext(NoteContext);
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   return (
     <div>
@@ -53,7 +55,11 @@ const Register = () => {
             />
           </div>
           <button
-            onClick={() => console.log(form)}
+            onClick={() => {
+              console.log(form);
+              register(form);
+              navigate("/login");
+            }}
             className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
           >
             Register
